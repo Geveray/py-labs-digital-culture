@@ -12,17 +12,28 @@ class Lamp:
         Примеры:
         >>> lamp = Lamp(100, 10) # инициализация экземпляра класса
         """
-        if not isinstance(max_brightness, (int, float)):
-            raise TypeError("Максимальная яркость лампы должна быть типа int или float")
-        if max_brightness <= 0:
-            raise ValueError("Максимальная яркость лампы должна быть положительным ненулевым числом.")
-        self.max_brightness = max_brightness
+        if self.validate(max_brightness):
+            self.max_brightness = max_brightness
 
-        if not isinstance(current_brightness, (int, float)):
-            raise TypeError("Текущая яркость лампы должна быть типа int или float")
-        if current_brightness < 0:
-            raise ValueError("Текущая яркость лампы должна быть положительным числом.")
-        self.current_brightness = current_brightness
+        if self.validate(current_brightness):
+            self.current_brightness = current_brightness
+
+    def validate(self, value) -> bool:
+        """
+        Функция, проверяющая, что введённое значение - неотрицательное число
+
+        :return: Истина, если всё в порядке, иначе соответствующая ошибка
+
+        Примеры:
+        >>> lamp = Lamp(100, 1)
+        >>> lamp.validate(3)
+        True
+        """
+        if not isinstance(value, (int, float)):
+            raise TypeError("Значение должно быть типа int или float")
+        if value < 0:
+            raise ValueError("Значение должно быть положительным числом.")
+        return True
 
     def is_light_on(self) -> bool:
         """
@@ -51,13 +62,10 @@ class Lamp:
         >>> lamp = Lamp(100, 10)
         >>> lamp.set_lamp_brightness(40)
         """
-        if not isinstance(brightness, (int, float)):
-            raise TypeError("Яркость должна быть типа int или float")
-        if brightness < 0:
-            raise ValueError("Яркость должна быть положительным числом.")
-        if brightness > self.max_brightness:
-            raise ValueError("Яркость не должна превышать предела данной лампы, а именно", self.max_brightness)
-        self.current_brightness = brightness
+        if self.validate(brightness):
+            if brightness > self.max_brightness:
+                raise ValueError("Яркость не должна превышать предела данной лампы, а именно", self.max_brightness)
+            self.current_brightness = brightness
 
 
 class Book_shelf:
@@ -71,11 +79,8 @@ class Book_shelf:
         Примеры:
         >>> shelf1 = Book_shelf(5, ["Понедельник начинается в субботу", "Мы"]) # инициализация экземпляра класса
         """
-        if not isinstance(max_books, (int, float)):
-            raise TypeError("Количество книг, которое помещается на полке должно быть типа int или float")
-        if max_books <= 0:
-            raise ValueError("Количество книг, которое помещается на полке должно быть положительным ненулевым числом.")
-        self.max_books = max_books
+        if self.validate(max_books):
+            self.max_books = max_books
 
         if not isinstance(current_books, list):
             raise TypeError("Книге на полке должы быть записаны в список.")
@@ -85,6 +90,23 @@ class Book_shelf:
         if len(current_books) > max_books:
             raise ValueError("Список книг на полке не может содержать книг больше чем может вместить полка.")
         self.current_books = current_books
+
+    def validate(self, value) -> bool:
+        """
+        Функция, проверяющая, что введённое значение - неотрицательное число
+
+        :return: Истина, если всё в порядке, иначе соответствующая ошибка
+
+        Примеры:
+        >>> shelf1 = Book_shelf(5, ["Понедельник начинается в субботу", "Мы"])
+        >>> shelf1.validate(3)
+        True
+        """
+        if not isinstance(value, (int, float)):
+            raise TypeError("Значение должно быть типа int или float")
+        if value < 0:
+            raise ValueError("Значение должно быть положительным числом.")
+        return True
 
     def is_shelf_empty(self) -> bool:
         """
@@ -135,8 +157,9 @@ class Book_shelf:
         if book_index < 1:
             raise ValueError("Номерация книг начинается с 1")
         if book_index > len(self.current_books):
-            raise ValueError("Можно убрать только те книги, которые стоят на полке, пока что их", len(self.current_books))
-        self.current_books.pop(book_index-1)
+            raise ValueError("Можно убрать только те книги, которые стоят на полке, пока что их",
+                             len(self.current_books))
+        self.current_books.pop(book_index - 1)
 
 
 class Boudget:
@@ -150,17 +173,28 @@ class Boudget:
         Примеры:
         >>> boudget1 = Boudget(5000, 350) # инициализация экземпляра класса
         """
-        if not isinstance(podushka, (int, float)):
-            raise TypeError("Бюджет должен выражаться числом.")
-        if podushka < 0:
-            raise ValueError("Бюджет не должен изначально быть отрицательным.")
-        self.boudget = podushka
+        if self.validate(podushka):
+            self.boudget = podushka
 
-        if not isinstance(subscriptions, (int, float)):
-            raise TypeError("Плата за подписки выражается числом.")
-        if subscriptions < 0:
-            raise ValueError("Плата за подписки не должна быть отрицательной.")
-        self.subscriptions = subscriptions
+        if self.validate(subscriptions):
+            self.subscriptions = subscriptions
+
+    def validate(self, value) -> bool:
+        """
+        Функция, проверяющая, что введённое значение - неотрицательное число
+
+        :return: Истина, если всё в порядке, иначе соответствующая ошибка
+
+        Примеры:
+        >>> boudget1 = Boudget(5000, 350)
+        >>> boudget1.validate(3)
+        True
+        """
+        if not isinstance(value, (int, float)):
+            raise TypeError("Значение должно быть типа int или float")
+        if value < 0:
+            raise ValueError("Значение должно быть положительным числом.")
+        return True
 
     def new_month(self, salary: float = 0, spend: float = 0) -> float:
         """
@@ -177,17 +211,12 @@ class Boudget:
         >>> boudget1.new_month(1000, 500)
         5300
         """
-        if not isinstance(salary, (int, float)):
-            raise TypeError("Зарплата должна выражаться числом")
-        if not isinstance(spend, (int, float)):
-            raise TypeError("Потраченные деньги должны выражаться числом")
-        if salary < 0 or spend < 0:
-            raise ValueError("И зарплата, и потраченные деньги должны быть положительными числами.")
-        new_boudget = round(self.boudget - self.subscriptions + salary - spend, 2)
-        if new_boudget < 0:
-            raise ValueError("При таких условиях мы обанкротимся.")
-        self.boudget = new_boudget
-        return new_boudget
+        if self.validate(salary) and self.validate(spend):
+            new_boudget = round(self.boudget - self.subscriptions + salary - spend, 2)
+            if new_boudget < 0:
+                raise ValueError("При таких условиях мы обанкротимся.")
+            self.boudget = new_boudget
+            return new_boudget
 
     def set_subscriptions(self, new_sub: float) -> None:
         """
@@ -200,13 +229,11 @@ class Boudget:
         >>> boudget1 = Boudget(5000, 200)
         >>> boudget1.set_subscriptions(300)
         """
-        if not isinstance(new_sub, (int, float)):
-            raise TypeError("Стоимость подписок должна выражаться числом.")
-        if new_sub < 0:
-            raise ValueError("Стоимость подписок не может быть отрицательной")
-        if new_sub > self.boudget:
-            raise ValueError("Не допускается брать подписки превышающие нынешний бюджет. Он составляет", self.boudget)
-        self.subscriptions = new_sub
+        if self.validate(new_sub):
+            if new_sub > self.boudget:
+                raise ValueError("Не допускается брать подписки превышающие нынешний бюджет. Он составляет",
+                                 self.boudget)
+            self.subscriptions = new_sub
 
 
 if __name__ == "__main__":
