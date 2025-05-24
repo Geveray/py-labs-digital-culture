@@ -10,13 +10,25 @@ class Lamp:
         Примеры:
         >>> lamp = Lamp(100, 10) # инициализация экземпляра класса
         """
-        if not isinstance(max_brightness, (int, float)):
-            raise TypeError("Максимальная яркость лампы должна быть типа int или float")
-        if max_brightness <= 0:
-            raise ValueError("Максимальная яркость лампы должна быть положительным ненулевым числом.")
-        self._max_brightness = max_brightness
+        if self.validate(max_brightness):
+            self._max_brightness = max_brightness
         self.current_brightness = current_brightness
-        self.voltage = []
+
+    @staticmethod
+    def validate(value) -> bool:
+        """
+        Функция, проверяющая, что введённое значение - неотрицательное число
+        :return: Истина, если всё в порядке, иначе соответствующая ошибка
+        Примеры:
+        >>> lamp = Lamp(100, 1)
+        >>> lamp.validate(3)
+        True
+        """
+        if not isinstance(value, (int, float)):
+            raise TypeError("Значение должно быть типа int или float")
+        if value < 0:
+            raise ValueError("Значение должно быть положительным числом.")
+        return True
 
     @property
     def max_brightness(self):
@@ -28,12 +40,8 @@ class Lamp:
 
     @current_brightness.setter
     def current_brightness(self, current_brightness):
-        if not isinstance(current_brightness, (int, float)):
-            raise TypeError("Яркость лампы должна быть типа int или float")
-        if current_brightness < 0:
-            raise ValueError("Яркость лампы не должна быть отрицательным числом.")
-        self._current_brightness = current_brightness
-
+        if self.validate(current_brightness):
+            self._current_brightness = current_brightness
 
     def is_light_on(self) -> bool:
         """
@@ -64,13 +72,10 @@ class Lamp:
         >>> lamp = Lamp(100, 10)
         >>> lamp.set_lamp_brightness(40)
         """
-        if not isinstance(brightness, (int, float)):
-            raise TypeError("Яркость должна быть типа int или float")
-        if brightness < 0:
-            raise ValueError("Яркость должна быть положительным числом.")
-        if brightness > self.max_brightness:
-            raise ValueError("Яркость не должна превышать предела данной лампы, а именно", self.max_brightness)
-        self.current_brightness = brightness
+        if self.validate(brightness):
+            if brightness > self.max_brightness:
+                raise ValueError("Яркость не должна превышать предела данной лампы, а именно", self.max_brightness)
+            self.current_brightness = brightness
 
     def __str__(self) -> str:
         return f"Лампа с яркостью {self.current_brightness}"
@@ -79,10 +84,11 @@ class Lamp:
         return f'{self.__class__.__name__}(max_brightness={self.max_brightness}, ' \
                f'current_brightness={self.current_brightness})'
 
+
 class Diode_lamp(Lamp):
     """
-    Создание и подготовка к работе дочернего (для класса "Лампа") класса "Светодиодная лампа"
-    Кроме унаследованных от класса "Лампа" атрибутов max_brightness и current_parameters, этот класс имеет уникальный атрибут
+    Создание и подготовка к работе дочернего (для класса "Лампа") класса "Светодиодная лампа" Кроме унаследованных от
+    класса "Лампа" атрибутов max_brightness и current_parameters, этот класс имеет уникальный атрибут
     :param colour: Цвет светодиодной лампы
 
     Из базового класса мы наследуем методы установки яркости и проверки на вкл/выкл
@@ -94,6 +100,7 @@ class Diode_lamp(Lamp):
     Пример:
     >>> d_lamp1 = Diode_lamp(100, 10, "red")
     """
+
     def __init__(self, max_brightness: float, current_brightness: float, colour: str) -> None:
         # Используем инициализатор класса выше для унаследованных параметров.
         super().__init__(max_brightness, current_brightness)
@@ -107,6 +114,7 @@ class Diode_lamp(Lamp):
     """
     Перегружены магические метода str и repr, в угоду добавлению информации о цвете объекта.
     """
+
     def __str__(self) -> str:
         return f"Лампа с яркостью {self.current_brightness} цвета {self.colour}"
 
@@ -126,7 +134,5 @@ class Diode_lamp(Lamp):
         return self.colour == other.colour
 
 
-
-
-lamp1 = Lamp(100,20)
+lamp1 = Lamp(100, 20)
 lamp1.current_brightness = 150
